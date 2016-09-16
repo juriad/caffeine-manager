@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
+
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+	<jdbc:initialize-database data-source="dataSource">
+		<jdbc:script location="classpath:schema.sql" />
+	</jdbc:initialize-database>
+
+	<context:property-placeholder location="classpath:jdbc.properties" />
+
+	<bean id="userService" class="cz.artique.test.caffeineManager.service.UserService">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="machineService" class="cz.artique.test.caffeineManager.service.MachineService">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="coffeeService" class="cz.artique.test.caffeineManager.service.CoffeeService">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="statsService" class="cz.artique.test.caffeineManager.service.StatsService">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="userResource" class="cz.artique.test.caffeineManager.resource.UserResource"></bean>
+	<bean id="machineResource" class="cz.artique.test.caffeineManager.resource.MachineResource"></bean>
+	<bean id="coffeeResource" class="cz.artique.test.caffeineManager.resource.CoffeeResource"></bean>
+	<bean id="statsResource" class="cz.artique.test.caffeineManager.resource.StatsResource"></bean>
+
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+
+</beans>
